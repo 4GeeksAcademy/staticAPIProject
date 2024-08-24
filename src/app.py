@@ -14,6 +14,21 @@ CORS(app)
 
 # create the jackson family object
 jackson_family = FamilyStructure("Jackson")
+# jackson_family.add_member({
+#     "first_name": "John",
+#     "age": 33,
+#     "lucky_numbers": [7, 13, 22]
+# })
+# jackson_family.add_member({
+#     "first_name": "Jane",
+#     "age": 35,
+#     "lucky_numbers": [10, 14, 3]
+# })
+# jackson_family.add_member({
+#     "first_name": "Jimmy",
+#     "age": 5,
+#     "lucky_numbers": [1]
+# })
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
@@ -26,17 +41,34 @@ def sitemap():
     return generate_sitemap(app)
 
 @app.route('/members', methods=['GET'])
-def handle_hello():
+def get_all_family_members():
 
     # this is how you can use the Family datastructure by calling its methods
     members = jackson_family.get_all_members()
-    response_body = {
-        "hello": "world",
-        "family": members
-    }
-
+    response_body = members
 
     return jsonify(response_body), 200
+
+@app.route('/member', methods=['POST'])
+def add_member():
+    body = request.get_json()
+
+    if body is None:
+        return "The request body is null", 400
+    if 'first_name' not in body:
+        return 'You need to specify the first_name', 400
+    if 'age' not in body:
+        return 'You need to specify the age', 400
+    if 'lucky_numbers' not in body:
+        return 'You need to specify the lucky_numbers', 400
+    
+    added_member = jackson_family.add_member({
+        "first_name": body["first_name"],
+        "age": body["age"],
+        "lucky_numbers": body["lucky_numbers"],
+    })
+
+    return jsonify(added_member), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
