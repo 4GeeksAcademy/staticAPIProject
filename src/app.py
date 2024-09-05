@@ -49,26 +49,38 @@ def get_all_family_members():
 
     return jsonify(response_body), 200
 
+
+
+@app.route("/member/<int:id>", methods=["GET"])
+def get_single_member(id):
+    member = jackson_family.get_member(id)
+    if member: 
+        return jsonify(member), 200
+    else:
+        return jsonify({"error": "member not found"}), 404
+    
+
+
+
 @app.route('/member', methods=['POST'])
 def add_member():
-    body = request.get_json()
+   member = request.json
+   members = jackson_family.add_member(member)
+   if members:
+       return jsonify(members), 200
+   else:
+       return jsonify({"error": "unable to add new member"}), 400
+   
 
-    if body is None:
-        return "The request body is null", 400
-    if 'first_name' not in body:
-        return 'You need to specify the first_name', 400
-    if 'age' not in body:
-        return 'You need to specify the age', 400
-    if 'lucky_numbers' not in body:
-        return 'You need to specify the lucky_numbers', 400
+
+@app.route("/member/<int:id>", methods=["DELETE"])
+def delete_member(id):
+    result = jackson_family.delete_member(id)
+    if result:
+        return jsonify({"done": True}), 200
+    else:
+        return jsonify({"done": False}), 400
     
-    added_member = jackson_family.add_member({
-        "first_name": body["first_name"],
-        "age": body["age"],
-        "lucky_numbers": body["lucky_numbers"],
-    })
-
-    return jsonify(added_member), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':

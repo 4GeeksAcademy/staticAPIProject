@@ -15,24 +15,24 @@ class FamilyStructure:
         
         self._members = [
             {
-                "last_name": last_name,
+                "last_name": self.last_name,
                 "id": self._generateId(),
                 "first_name": "John",
-                "age": 33,
+                "age": "33",
                 "lucky_numbers": [7, 13, 22]  
             },
             {
-               "last_name": last_name,
+               "last_name": self.last_name,
                 "id": self._generateId(),
                 "first_name": "Jane",
-                "age": 35,
+                "age": "35",
                 "lucky_numbers": [10, 14, 3] 
             },
             {
-               "last_name": last_name,
+               "last_name": self.last_name,
                 "id": self._generateId(),
                 "first_name": "Jimmy",
-                "age": 5,
+                "age": "5",
                 "lucky_numbers": [1] 
             }
 
@@ -43,20 +43,30 @@ class FamilyStructure:
         return randint(0, 99999999)
 
     def add_member(self, member):
-        member["id"] = self._generateId()
-        member["last_name"] = self.last_name
-        self._members.append(member)
-        return member
+        if "id" not in member:
+            member["id"] = self._generateId()
+            member["last_name"] = self.last_name
+
+        if ("first_name" in member and "age" in member and "lucky_numbers" in member):
+            self._members.append(member)
+            return self._members
+        else:
+            return False
 
 
     def delete_member(self, id):
-        # fill this method and update the return
-        pass
+        for member in self._members:
+            if member["id"] == id:
+                self._members.remove(member)
+                return True
+        return False
+
 
     def get_member(self, id):
         for member in self._members:
-            if member["id"] == int(id):
+            if member["id"] == id:
                 return member
+        return False
         
 
     
